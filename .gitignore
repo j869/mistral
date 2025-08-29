@@ -6,6 +6,12 @@
 .pnp.js
 
 # testing
+node_modules/
+.env
+*.log
+.DS_Store
+
+# testing
 /coverage
 
 # next.js

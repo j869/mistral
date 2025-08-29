@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mistral 7B Chat</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .chat-container { border: 1px solid #ccc; padding: 20px; border-radius: 8px; }
+        #response { background: #f5f5f5; padding: 15px; border-radius: 4px; margin-top: 20px; white-space: pre-wrap; }
+        #loading { display: none; color: #666; }
+        textarea { width: 100%; padding: 10px; margin-bottom: 10px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>🤖 Mistral 7B Chat</h1>
+    
+    <div class="chat-container">
+        <textarea id="prompt" rows="4" placeholder="Ask Mistral anything..."></textarea>
+        <button onclick="generate()">Generate</button>
+        
+        <div id="loading">⏳ Generating response...</div>
+        
+        <div id="response"></div>
+    </div>
+
+    <script>
+        async function generate() {
+            const prompt = document.getElementById('prompt').value;
+            const responseDiv = document.getElementById('response');
+            const loading = document.getElementById('loading');
+            
+            if (!prompt) {
+                alert('Please enter a prompt');
+                return;
+            }
+            
+            loading.style.display = 'block';
+            responseDiv.innerHTML = '';
+            
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        prompt: prompt,
+                        max_tokens: 200,
+                        temperature: 0.7
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    responseDiv.innerHTML = `
+                        <strong>Response (${data.response_time}):</strong><br>
+                        ${data.response}
+                    `;
+                } else {
+                    responseDiv.innerHTML = `<strong>Error:</strong> ${data.error}`;
+                }
+                
+            } catch (error) {
+                responseDiv.innerHTML = `<strong>Error:</strong> ${error.message}`;
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
