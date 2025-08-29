@@ -80,7 +80,7 @@ function generateWithMistral(prompt, max_tokens, temperature) {
     
     const timeout = setTimeout(() => {
       reject(new Error('Generation timeout'));
-    }, 30000);
+    }, 1500000);
 
     pythonProcess.stdout.once('data', (data) => {
       clearTimeout(timeout);
